@@ -1,0 +1,107 @@
+﻿@page "/calculator"
+@using System.Globalization
+
+<PageTitle>Calculator</PageTitle>
+<h1>Calculator</h1>
+<div class="display">  
+   <p id="output">@_memory.ToString()</p>
+   <table>
+      <tr>
+         <td></td>
+         <td></td>
+         <td><button id="C-Button" @onclick="() => Clear()">C</button></td>
+         <td><button id="div-Button" @onclick='() => Operate("/")'>/</button></td>
+      </tr>
+      <tr>
+         <td><button id="7-Button" @onclick="() => InputNum(7)">7</button></td>
+         <td><button id="8-Button" @onclick="() => InputNum(8)">8</button></td>
+         <td><button id="9-Button" @onclick="() => InputNum(9)">9</button></td>
+         <td><button id="x-Button" @onclick='() => Operate("*")'>x</button></td>
+      </tr>
+      <tr>
+         <td><button id="4-Button" @onclick="() => InputNum(4)">4</button></td>
+         <td><button id="5-Button" @onclick="() => InputNum(5)">5</button></td>
+         <td><button id="6-Button" @onclick="() => InputNum(6)">6</button></td>
+         <td><button id="--Button" @onclick='() => Operate("-")'>-</button></td>
+      </tr>
+      <tr>
+         <td><button id="1-Button" @onclick="() => InputNum(1)">1</button></td>
+         <td><button id="2-Button" @onclick="() => InputNum(2)">2</button></td>
+         <td><button id="3-Button" @onclick="() => InputNum(3)">3</button></td>
+         <td><button id="+-Button" @onclick='() => Operate("+")'>+</button></td>
+      </tr>
+      <tr>
+         <td><button id="0-Button" @onclick="() => InputNum(0)">0</button></td>
+         <td><button id="dot-Button" @onclick="() => PointMode()">.</button></td>
+         <td><button id="equals-Button" @onclick="() => { Apply(); _memory=_acc; }">=</button></td>
+      </tr>
+   </table>
+</div>
+
+@code {
+   private double _acc = 0;
+   private double _memory=0;
+   private string _op = "";
+   private int _point = 0;
+
+    private void InputNum(int num)
+    {
+       if (_point < 1)
+       {
+          _memory *= 10;
+          _memory += num;
+       }
+       else
+       {
+          _memory += (num/System.Math.Pow(10,_point++));
+       }
+    }
+   
+   private void Apply()
+   {
+      if (_op == "")
+         return;
+      switch (_op)
+      {
+         case "+":
+            _acc += _memory;
+            break;
+         case "-":
+            _acc -= _memory;
+            break;
+         case "*":
+            _acc *= _memory;
+            break;
+         case "/":
+            _acc /= _memory;
+            break;
+      }
+      _memory = 0;
+      _point = 0;
+      _op = "";
+   }
+
+   private void Operate(string op)
+   {
+      if (_op != "")
+         Apply();
+      _acc = _memory;
+      _op = op;
+      _memory = 0;
+      _point = 0;
+   }
+
+
+   private void PointMode()
+   {
+      if (_point==0)
+         _point = 1;
+   }
+
+   private void Clear()
+   {
+      _memory = 0;
+      _acc = 0;
+      _point = 0;
+   }
+}
